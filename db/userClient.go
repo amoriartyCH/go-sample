@@ -37,8 +37,7 @@ func NewUserDatabaseClient(cfg *config.Config) UserClient {
 func (c *UserDatabaseClient) CreateUser(entity *user.UserDao) error {
 
 	collection := c.db.Collection("users")
-	insertedResult, err := collection.InsertOne(context.Background(), entity)
-	fmt.Println("This is returned from InsertOne: \n ", insertedResult)
+	_, err := collection.InsertOne(context.Background(), entity)
 	return err
 }
 

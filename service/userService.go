@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/amoriartyCH/go-sample/config"
 	"github.com/amoriartyCH/go-sample/db"
-	"github.com/amoriartyCH/go-sample/models/user"
+	"github.com/amoriartyCH/go-sample/models/rest"
 	"github.com/amoriartyCH/go-sample/transformers"
 	"github.com/hashicorp/go-uuid"
 	log "github.com/sirupsen/logrus"
@@ -12,8 +12,8 @@ import (
 
 // UserService provides an interface by which to interact with a User resource
 type UserService interface {
-	CreateUser(rest *user.UserRest) (ResponseType, error)
-	GetUser(id string) (ResponseType, *user.UserRest, error)
+	CreateUser(rest *rest.UserRest) (ResponseType, error)
+	GetUser(id string) (ResponseType, *rest.UserRest, error)
 	Shutdown()
 	//GetAllUsers() (ResponseType, *[]models.User, error)
 }
@@ -35,7 +35,7 @@ func NewUserService(cfg *config.Config) UserService {
 	}
 }
 
-func (s *UserServiceImpl) CreateUser(rest *user.UserRest) (ResponseType, error) {
+func (s *UserServiceImpl) CreateUser(rest *rest.UserRest) (ResponseType, error) {
 
 	// Set the ID of the rest object to be stored into the DB.
 	id, err := uuid.GenerateUUID()
@@ -58,12 +58,12 @@ func (s *UserServiceImpl) CreateUser(rest *user.UserRest) (ResponseType, error) 
 	return Success, nil
 }
 
-func (s *UserServiceImpl) GetUser(id string) (ResponseType, *user.UserRest, error) {
+func (s *UserServiceImpl) GetUser(id string) (ResponseType, *rest.UserRest, error) {
 
 	entity, err := s.userClient.GetUser(id)
 	if err != nil {
 		log.Errorf(fmt.Sprintf("error when attempting to get user: %s", err))
-		return Error, &user.UserRest{}, err
+		return Error, &rest.UserRest{}, err
 	}
 
 	rest := s.userTransformer.ToRest(entity)

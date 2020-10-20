@@ -3,7 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/amoriartyCH/go-sample/models/user"
+	"github.com/amoriartyCH/go-sample/models/rest"
 	"github.com/amoriartyCH/go-sample/service"
 	"github.com/gorilla/mux"
 	log "github.com/sirupsen/logrus"
@@ -29,7 +29,7 @@ func NewCreateUserHandler(service service.UserService) CreateUserHandler {
 func (c CreateUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// First we get the data from the request (r) and attempt to decode it into our user object.
-	var user user.UserRest
+	var user rest.UserRest
 	err := json.NewDecoder(r.Body).Decode(&user)
 
 	// If the decoding fails, it will most likely be due to bad data being submitted by the user.

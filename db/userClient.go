@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/amoriartyCH/go-sample/config"
-	"github.com/amoriartyCH/go-sample/models/user"
+	"github.com/amoriartyCH/go-sample/models/entity"
 	log "github.com/sirupsen/logrus"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -12,9 +12,9 @@ import (
 
 // UserClient provides an interface by which to interact with the user database
 type UserClient interface {
-	CreateUser(entity *user.UserDao) error
-	GetUser(id string) (*user.UserDao, error)
-	GetAllUsers() (*[]*user.UserDao, error)
+	CreateUser(entity *entity.UserDao) error
+	GetUser(id string) (*entity.UserDao, error)
+	GetAllUsers() (*[]*entity.UserDao, error)
 	Shutdown()
 }
 
@@ -34,7 +34,7 @@ func NewUserDatabaseClient(cfg *config.Config) UserClient {
 }
 
 // CreateUser creates a user entity in the database
-func (c *UserDatabaseClient) CreateUser(entity *user.UserDao) error {
+func (c *UserDatabaseClient) CreateUser(entity *entity.UserDao) error {
 
 	collection := c.db.Collection("users")
 	_, err := collection.InsertOne(context.Background(), entity)
@@ -42,9 +42,9 @@ func (c *UserDatabaseClient) CreateUser(entity *user.UserDao) error {
 }
 
 // GetUser fetches a user from the db according to an id
-func (c *UserDatabaseClient) GetUser(id string) (*user.UserDao, error) {
+func (c *UserDatabaseClient) GetUser(id string) (*entity.UserDao, error) {
 
-	var entity user.UserDao
+	var entity entity.UserDao
 
 	collection := c.db.Collection("users")
 	dbResource := collection.FindOne(context.Background(), bson.M{"_id": id})
@@ -67,9 +67,9 @@ func (c *UserDatabaseClient) GetUser(id string) (*user.UserDao, error) {
 }
 
 // GetAllUsers returns an array of all users in the database
-func (c *UserDatabaseClient) GetAllUsers() (*[]*user.UserDao, error) {
+func (c *UserDatabaseClient) GetAllUsers() (*[]*entity.UserDao, error) {
 
-	entities := make([]*user.UserDao, 0)
+	entities := make([]*entity.UserDao, 0)
 
 	collection := c.db.Collection("users")
 	cur, err := collection.Find(context.Background(), bson.M{})
@@ -80,7 +80,7 @@ func (c *UserDatabaseClient) GetAllUsers() (*[]*user.UserDao, error) {
 
 	for cur.Next(context.Background()) {
 
-		var entity user.UserDao
+		var entity entity.UserDao
 		err = cur.Decode(&entity)
 
 		if err != nil {

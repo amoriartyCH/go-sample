@@ -1,4 +1,4 @@
-package user
+package entity
 
 // UserDao describes a user database entity
 type UserDao struct {

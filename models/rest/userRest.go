@@ -1,4 +1,4 @@
-package user
+package rest
 
 // Defines the structure of our user in our DB
 type UserRest struct {

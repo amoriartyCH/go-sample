@@ -15,7 +15,6 @@ type UserService interface {
 	CreateUser(rest *rest.UserRest) (ResponseType, error)
 	GetUser(id string) (ResponseType, *rest.UserRest, error)
 	Shutdown()
-	//GetAllUsers() (ResponseType, *[]models.User, error)
 }
 
 // UserServiceImpl provides a concrete implementation of the UserService interface
@@ -30,8 +29,8 @@ type UserServiceImpl struct {
  */
 func NewUserService(cfg *config.Config) UserService {
 	return &UserServiceImpl{
-		userClient:          db.NewUserDatabaseClient(cfg),
-		userTransformer: transformers.NewUserTransformer(),
+		userClient:         db.NewUserDatabaseClient(cfg),
+		userTransformer: 	transformers.NewUserTransformer(),
 	}
 }
 
@@ -61,9 +60,16 @@ func (s *UserServiceImpl) CreateUser(rest *rest.UserRest) (ResponseType, error) 
 func (s *UserServiceImpl) GetUser(id string) (ResponseType, *rest.UserRest, error) {
 
 	entity, err := s.userClient.GetUser(id)
+
+	// If errors are returned from the userClient, then throw them up to the handler.
 	if err != nil {
 		log.Errorf(fmt.Sprintf("error when attempting to get user: %s", err))
-		return Error, &rest.UserRest{}, err
+		return Error, nil, err
+	}
+
+	// if nil entity, no results were found so cascade that up to the handler.
+	if entity == nil {
+		return NotFound, nil, nil
 	}
 
 	rest := s.userTransformer.ToRest(entity)
@@ -73,10 +79,3 @@ func (s *UserServiceImpl) GetUser(id string) (ResponseType, *rest.UserRest, erro
 func (s *UserServiceImpl) Shutdown() {
 	s.userClient.Shutdown()
 }
-
-// GET ALL USERS endpoint (Not needed?)
-//func (s *UserServiceImpl) GetAllUsers() (ResponseType, *[]models.UserRest, error) {
-//
-//	users := make([]models.User, 0)
-//	return Success, &users, nil
-//}
